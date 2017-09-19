@@ -2,8 +2,8 @@
 # vi: set ft=ruby :
 
 Vagrant.configure(2) do |config|
-  config.vm.box = "ubuntu/xenial64"
-
+  config.vm.box = "centos/7"
+  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
   @provider = "virtualbox"
   
   config.vm.provider "hyperv" do |v, override|
@@ -40,11 +40,12 @@ Vagrant.configure(2) do |config|
     # config.vm.provision :shell, :inline = @
     if Dir.glob("#{File.dirname(__FILE__)}/.vagrant/machines/first/" + @provider + "/id").empty?
       #   Install Docker
-      pkg_cmd = "curl -sSL https://get.docker.com/ | sh;"
-      #   Add user to the docker group and install packadges
-      pkg_cmd << "usermod -a -G docker " + @dockeruser + " ; "
-      pkg_cmd << "apt-get update -y -q; "
-      pkg_cmd << "apt-get install dnsmasq python3-pip python-psycopg2 libdbd-pg-perl libdbi-perl docker-compose mc -y -q; "
+      pkg_cmd = "yum update -y;"
+      pkg_cmd << "yum install -y yum-utils device-mapper-persistent-data lvm2; "
+      pkg_cmd << "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo; "
+      pkg_cmd << "yum install docker-ce -y; "
+      pkg_cmd << "systemctl start docker; "
+      pkg_cmd << "usermod -a -G docker vagrant; "
       config.vm.provision :shell, :inline => pkg_cmd
     end
   end
@@ -87,12 +88,12 @@ Vagrant.configure(2) do |config|
     # run the provisioning only is the first 'vagrant up'
     if Dir.glob("#{File.dirname(__FILE__)}/.vagrant/machines/second/virtualbox/id").empty?
       #   Install Docker
-      pkg_cmd = "curl -sSL https://get.docker.com/ | sh; "
-      #   Add user to the docker group and install packadges
-      pkg_cmd << "usermod -a -G docker ubuntu; "
-      config.vm.provision :shell, :inline => pkg_cmd
-      #  Install other software
-      pkg_cmd = "apt-get install dnsmasq python3-pip python-psycopg2 libdbd-pg-perl libdbi-perl docker-compose mc -y -q; "
+      pkg_cmd = "yum update -y;"
+      pkg_cmd << "yum install -y yum-utils device-mapper-persistent-data lvm2; "
+      pkg_cmd << "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo; "
+      pkg_cmd << "yum install docker-ce -y; "
+      pkg_cmd << "systemctl start docker; "
+      pkg_cmd << "usermod -a -G docker vagrant; "
       config.vm.provision :shell, :inline => pkg_cmd
       # Create partition
       config.vm.provision "shell", inline: <<-EOF
@@ -124,10 +125,6 @@ Vagrant.configure(2) do |config|
       third.vm.network "forwarded_port", guest: 9998, host: 9998
       third.vm.network "forwarded_port", guest: 9999, host: 9999
 
-      # first.vm.provider "hyperv" do |vb|
-      #   vb.vmname = "pg-third-stage"
-      # end
-
       third.vm.provider "virtualbox" do |vb|
          vb.memory = "1024"
          vb.name = "pg-third-stage"
@@ -154,10 +151,12 @@ Vagrant.configure(2) do |config|
     # run the provisioning only is the first 'vagrant up'
     if Dir.glob("#{File.dirname(__FILE__)}/.vagrant/machines/third/" + @provider + "/id").empty?
       # #   Install Docker
-      # pkg_cmd = "sudo su -c 'curl -sSL https://get.docker.com/ | sh;'"
-      # #   Add user to the docker group and install packadges
-      # pkg_cmd << "usermod -a -G docker " + @dockeruser + " ; "
-      # pkg_cmd << "apt-get install dnsmasq python3-pip python-psycopg2 libdbd-pg-perl libdbi-perl docker-compose mc -y -q; "
+      pkg_cmd = "yum update -y;"
+      pkg_cmd << "yum install -y yum-utils device-mapper-persistent-data lvm2; "
+      pkg_cmd << "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo; "
+      pkg_cmd << "yum install docker-ce -y; "
+      pkg_cmd << "systemctl start docker; "
+      pkg_cmd << "usermod -a -G docker vagrant; "
       # config.vm.provision :shell, :inline => pkg_cmd
       # # TODO add btrfs Create partition
       config.vm.provision "shell", inline: <<-EOF
