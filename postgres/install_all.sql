@@ -8,7 +8,7 @@ ALTER SYSTEM SET log_checkpoints = on;
 ALTER SYSTEM SET log_connections = on;
 ALTER SYSTEM SET log_disconnections = on;
 ALTER SYSTEM SET log_lock_waits = on;
-ALTER SYSTEM SET log_temp_files = 0;
+ALTER SYSTEM SET log_temp_files = 1;
 ALTER SYSTEM SET log_line_prefix = '%t [%p]: [%l-1] ';
 ALTER SYSTEM SET lc_messages = 'C';
 
