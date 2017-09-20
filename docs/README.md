@@ -18,7 +18,7 @@
 
 ```
 git clone https://github.com/VanessaDockers/pgclass20.git
-cd pgsteroids
+cd pgclass20
 vagrant up
 vagrant ssh
 cd /vagrant
