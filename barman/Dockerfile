@@ -66,5 +66,6 @@ RUN chmod +x /tmp/install_barman.sh && /tmp/install_barman.sh && rm /tmp/install
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["cron", "-L", "0",  "-f"]
 COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
 COPY update_secure_files /usr/bin/
 WORKDIR ${BARMAN_DATA_DIR}
