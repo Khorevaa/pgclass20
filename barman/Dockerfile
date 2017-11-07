@@ -57,7 +57,7 @@ ENV \
 VOLUME /var/log/barman
 
 COPY install_barman.sh /tmp/
-RUN /tmp/install_barman.sh && rm /tmp/install_barman.sh
+RUN chmod +x /tmp/install_barman.sh && /tmp/install_barman.sh && rm /tmp/install_barman.sh
 
 # Install the entrypoint script.  It will set up ssh-related things and then run
 # the CMD which, by default, starts cron.  The 'barman -q cron' job will get
@@ -67,4 +67,5 @@ ENTRYPOINT ["/entrypoint.sh"]
 CMD ["cron", "-L", "0",  "-f"]
 COPY entrypoint.sh /
 COPY update_secure_files /usr/bin/
+RUN chmod +x /entrypoint.sh /usr/bin/update_secure_files
 WORKDIR ${BARMAN_DATA_DIR}
